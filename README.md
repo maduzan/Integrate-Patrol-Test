@@ -262,3 +262,65 @@ patrol test --target patrol_test/app_test.dart
 # Or target a specific device:
 patrol test --target patrol_test/app_test.dart -d "iPhone 18 Pro"
 ```
+
+---
+
+## 💡 Useful Testing Workflows & Pro-Tips
+
+### 1. Fast Development with Hot Restart (`patrol develop`)
+When writing and refining your tests, rebuilding the whole app every time takes too long. Use `patrol develop`:
+
+```bash
+patrol develop --target patrol_test/app_test.dart -d "iPhone 18 Pro"
+```
+
+* **Keeps the app & simulator open.**
+* **Instant Hot Restart:** Press **`r`** in your terminal to re-run your test in seconds without rebuilding!
+* Press **`q`** to quit.
+
+---
+
+### 2. Run Directly from Xcode GUI (`Cmd + U`)
+You can watch your test run live and inspect detailed failure logs:
+1. Open `ios/Runner.xcworkspace`.
+2. Select **Runner > your simulator** in the top bar.
+3. Press **`Cmd + U`** (or click **Product > Test**).
+
+---
+
+### 3. Open Visual Test Reports (.xcresult)
+Whenever you run tests from terminal, Xcode saves a full test report:
+
+```bash
+open build/ios_results_*.xcresult
+```
+This opens the Xcode Test Inspector showing exact step timings, logs, and failure stack traces.
+
+---
+
+### 4. Taking Screenshots in Tests
+Capture screenshots of your app at any moment during native test execution:
+
+```dart
+// Take a screenshot
+await $.native.takeScreenshot('01_initial_screen');
+
+// Perform action
+await $('Change to Red').tap();
+
+// Take another screenshot
+await $.native.takeScreenshot('02_after_button_tap');
+```
+
+---
+
+## 🛠️ Common Errors & Solutions
+
+| Problem | Cause | Solution |
+| :--- | :--- | :--- |
+| **`Xcodebuild error code 65`** | Script sandboxing or invalid deployment target (e.g. 27.0). | In `RunnerUITests` build settings: set `ENABLE_USER_SCRIPT_SANDBOXING = NO` and `IPHONEOS_DEPLOYMENT_TARGET = 15.0`. |
+| **iOS Simulator closes / tests run invisibly** | Xcode's **Parallel Testing** spawns headless ghost clones. | In Xcode Scheme (or `Runner.xcscheme`): set `parallelizable = "NO"`. |
+| **`cannot find symbol PatrolTestRule` on Android** | Outdated imports in `MainActivityTest.java`. | Use modern `pl.leancode.patrol.PatrolJUnitRunner` with `@RunWith(Parameterized.class)`. |
+| **VS Code prompts to install Java extension** | Started debugging while `MainActivityTest.java` was open. | Open `lib/main.dart` first, select your device, and then start debugging. |
+| **`adb: command not found` / `$ANDROID_HOME` not set** | Environment variables missing from terminal. | Add Android SDK paths to `~/.zshrc` and run `source ~/.zshrc`. |
+
