@@ -24,7 +24,9 @@ class _ColorChangeAppState extends State<ColorChangeApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        key: const Key('color_box',), // Key so our widget test can find this container
+        key: const Key(
+          'color_box',
+        ), // Key so our widget test can find this container
         color: _currentColor,
         child: Center(
           child: ElevatedButton(
